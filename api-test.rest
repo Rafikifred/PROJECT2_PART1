@@ -1,0 +1,47 @@
+### Get all students
+GET http://localhost:3000/students
+Accept: application/json
+
+### Create a student
+POST http://localhost:3000/students
+Content-Type: application/json
+
+{
+  "firstName": "Alice",
+  "lastName": "Mwangi",
+  "email": "alice.mwangi@example.com",
+  "age": 20,
+  "gender": "Female",
+  "level": "Undergraduate",
+  "phone": "0788000123",
+  "address": "Kigali, Rwanda"
+}
+
+### Get all teachers
+GET http://localhost:3000/teachers
+Accept: application/json
+
+### Create a teacher
+POST http://localhost:3000/teachers
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "department": "Mathematics",
+  "hireDate": "2015-09-01",
+  "phone": "0788123456",
+  "office": "B201"
+}
+
+### Update a student (replace id)
+PUT http://localhost:3000/students/<REPLACE_STUDENT_ID>
+Content-Type: application/json
+
+{
+  "level": "Graduate"
+}
+
+### Delete a teacher (replace id)
+DELETE http://localhost:3000/teachers/<REPLACE_TEACHER_ID>
