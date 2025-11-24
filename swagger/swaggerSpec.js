@@ -1,9 +1,9 @@
 const swaggerJSDoc = {
   openapi: '3.0.0',
   info: {
-    title: 'W04 Project API',
+    title: 'W03 Project API',
     version: '1.0.0',
-    description: 'API documentation for Students and Teachers collections with Authentication'
+    description: 'API documentation for Students, Teachers, and Auth'
   },
   servers: [
     { url: 'http://localhost:3000', description: 'Local server' }
@@ -17,18 +17,72 @@ const swaggerJSDoc = {
       }
     }
   },
-  security: [],
+  security: [
+    { bearerAuth: [] } // Apply globally; can be overridden per route
+  ],
   paths: {
+    // --- Auth Routes ---
+    '/auth/register': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Register a new user',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  username: { type: 'string' },
+                  email: { type: 'string' },
+                  password: { type: 'string' }
+                },
+                required: ['username', 'email', 'password']
+              }
+            }
+          }
+        },
+        responses: {
+          201: { description: 'User registered' },
+          400: { description: 'Validation or duplicate error' }
+        }
+      }
+    },
+    '/auth/login': {
+      post: {
+        tags: ['Auth'],
+        summary: 'Login user and receive JWT token',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  email: { type: 'string' },
+                  password: { type: 'string' }
+                },
+                required: ['email', 'password']
+              }
+            }
+          }
+        },
+        responses: {
+          200: { description: 'Logged in with token' },
+          400: { description: 'Invalid credentials' }
+        }
+      }
+    },
+
+    // --- Students Routes ---
     '/students': {
       get: {
         summary: 'Get all students',
-        tags: ['Students'],
         responses: { 200: { description: 'List of students' } }
       },
       post: {
-        summary: 'Create a new student (protected)',
-        tags: ['Students'],
-        security: [{ bearerAuth: [] }],
+        summary: 'Create a new student',
+        security: [{ bearerAuth: [] }], // require JWT
         requestBody: {
           required: true,
           content: {
@@ -42,27 +96,24 @@ const swaggerJSDoc = {
                   age: { type: 'integer' },
                   grade: { type: 'string' },
                   phone: { type: 'string' },
-                  address: { type: 'string' },
-                  gender: { type: 'string' }
+                  address: { type: 'string' }
                 },
-                required: ['firstName', 'lastName', 'email', 'age', 'grade', 'phone', 'address', 'gender']
+                required: ['firstName', 'lastName', 'email', 'age', 'grade', 'phone', 'address']
               }
             }
           }
         },
-        responses: { 201: { description: 'Student created' }, 401: { description: 'Unauthorized' } }
+        responses: { 201: { description: 'Student created' } }
       }
     },
     '/students/{id}': {
       get: {
         summary: 'Get a student by ID',
-        tags: ['Students'],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-        responses: { 200: { description: 'Student found' }, 404: { description: 'Not found' } }
+        responses: { 200: { description: 'Student found' } }
       },
       put: {
-        summary: 'Update a student by ID (protected)',
-        tags: ['Students'],
+        summary: 'Update a student by ID',
         security: [{ bearerAuth: [] }],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
         requestBody: {
@@ -78,33 +129,27 @@ const swaggerJSDoc = {
                   age: { type: 'integer' },
                   grade: { type: 'string' },
                   phone: { type: 'string' },
-                  address: { type: 'string' },
-                  gender: { type: 'string' }
+                  address: { type: 'string' }
                 }
               }
             }
           }
         },
-        responses: { 200: { description: 'Student updated' }, 401: { description: 'Unauthorized' } }
+        responses: { 200: { description: 'Student updated' } }
       },
       delete: {
-        summary: 'Delete a student by ID (protected)',
-        tags: ['Students'],
+        summary: 'Delete a student by ID',
         security: [{ bearerAuth: [] }],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-        responses: { 200: { description: 'Student deleted' }, 401: { description: 'Unauthorized' } }
+        responses: { 200: { description: 'Student deleted' } }
       }
     },
 
+    // --- Teachers Routes ---
     '/teachers': {
-      get: {
-        summary: 'Get all teachers',
-        tags: ['Teachers'],
-        responses: { 200: { description: 'List of teachers' } }
-      },
+      get: { summary: 'Get all teachers', responses: { 200: { description: 'List of teachers' } } },
       post: {
-        summary: 'Create a new teacher (protected)',
-        tags: ['Teachers'],
+        summary: 'Create a new teacher',
         security: [{ bearerAuth: [] }],
         requestBody: {
           required: true,
@@ -126,19 +171,17 @@ const swaggerJSDoc = {
             }
           }
         },
-        responses: { 201: { description: 'Teacher created' }, 401: { description: 'Unauthorized' } }
+        responses: { 201: { description: 'Teacher created' } }
       }
     },
     '/teachers/{id}': {
       get: {
         summary: 'Get a teacher by ID',
-        tags: ['Teachers'],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-        responses: { 200: { description: 'Teacher found' }, 404: { description: 'Not found' } }
+        responses: { 200: { description: 'Teacher found' } }
       },
       put: {
-        summary: 'Update a teacher by ID (protected)',
-        tags: ['Teachers'],
+        summary: 'Update a teacher by ID',
         security: [{ bearerAuth: [] }],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
         requestBody: {
@@ -160,14 +203,13 @@ const swaggerJSDoc = {
             }
           }
         },
-        responses: { 200: { description: 'Teacher updated' }, 401: { description: 'Unauthorized' } }
+        responses: { 200: { description: 'Teacher updated' } }
       },
       delete: {
-        summary: 'Delete a teacher by ID (protected)',
-        tags: ['Teachers'],
+        summary: 'Delete a teacher by ID',
         security: [{ bearerAuth: [] }],
         parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
-        responses: { 200: { description: 'Teacher deleted' }, 401: { description: 'Unauthorized' } }
+        responses: { 200: { description: 'Teacher deleted' } }
       }
     }
   }
