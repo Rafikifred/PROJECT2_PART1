@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+
 // Import routes
 const studentsRoutes = require('./routes/students');
 const teachersRoutes = require('./routes/teachers');
@@ -28,6 +29,9 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
 // Swagger setup — must be after app is initialized
 const setupSwagger = require('./swagger/swagger'); // correct path
 setupSwagger(app); // call after app and MongoDB setup
+const authRoutes = require('./routes/auth');
+app.use('/auth', authRoutes);
+
 
 // Routes
 app.use('/students', studentsRoutes);

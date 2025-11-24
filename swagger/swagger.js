@@ -1,6 +1,7 @@
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swaggerSpec'); // points to swaggerSpec.js
+const swaggerSpec = require('./swaggerSpec'); // updated swaggerSpec.js with protected routes
 
 module.exports = (app) => {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  // Serve Swagger UI at /api-docs
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
 };
